@@ -1,0 +1,38 @@
+{
+  "name": "collage-maker",
+  "version": "1.0.0",
+  "description": "A fast, lightweight desktop collage maker. Copy -> Paste -> Arrange -> Customize -> Export.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^34.0.0",
+    "electron-builder": "^26.15.3"
+  },
+  "build": {
+    "appId": "com.collagemaker.app",
+    "productName": "Collage Maker",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "Collage Maker"
+    }
+  }
+}

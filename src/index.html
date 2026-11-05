@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: file: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'">
+  <title>Collage Maker</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <header id="toolbar">
+      <div class="brand"><span class="brand-mark">▦</span><span class="brand-name">Collage Maker</span></div>
+      <div class="tb-group">
+        <button id="btn-new" class="tb-btn" title="New collage (Ctrl+N)"><span class="ico">✚</span><span>New</span></button>
+        <button id="btn-open" class="tb-btn" title="Open project (Ctrl+O)"><span class="ico">📂</span><span>Open</span></button>
+        <button id="btn-save" class="tb-btn" title="Save project (Ctrl+S)"><span class="ico">💾</span><span>Save</span></button>
+      </div>
+      <div class="tb-divider"></div>
+      <div class="tb-group">
+        <button id="btn-undo" class="tb-btn" title="Undo (Ctrl+Z)"><span class="ico">↶</span><span>Undo</span></button>
+        <button id="btn-redo" class="tb-btn" title="Redo (Ctrl+Y)"><span class="ico">↷</span><span>Redo</span></button>
+      </div>
+      <div class="tb-divider"></div>
+      <div class="tb-group">
+        <button id="btn-paste" class="tb-btn primary" title="Paste image (Ctrl+V)"><span class="ico">📋</span><span>Paste</span></button>
+        <button id="btn-add-image" class="tb-btn" title="Add one or many images from your computer (Ctrl+click / Shift+click to multi-select)"><span class="ico">🖼</span><span>Add Images</span></button>
+      </div>
+      <div class="tb-spacer"></div>
+      <div class="tb-group">
+        <button id="btn-layout" class="tb-btn" title="Open layout tools"><span class="ico">⌗</span><span>Layout</span></button>
+        <button id="btn-background" class="tb-btn" title="Background settings"><span class="ico">◐</span><span>Background</span></button>
+        <button id="btn-export" class="tb-btn accent" title="Export collage (Ctrl+E)"><span class="ico">⇩</span><span>Export</span></button>
+      </div>
+    </header>
+
+    <div id="main">
+      <aside id="tools-panel">
+        <div class="panel-header">Tools</div>
+
+        <div class="panel-section">
+          <div class="section-title">Layout Mode</div>
+          <div class="seg" id="layout-mode-seg">
+            <button data-v="auto" class="active" title="Automatically arrange images">Auto</button>
+            <button data-v="templates">Templates</button>
+            <button data-v="custom">Custom</button>
+          </div>
+        </div>
+
+        <div class="panel-section" id="layout-auto-section">
+          <div class="section-title">Arrange Style</div>
+          <div class="seg" id="auto-style-seg">
+            <button data-v="balanced" class="active" title="Balanced grid">Balanced</button>
+            <button data-v="compact">Compact</button>
+            <button data-v="grid">Grid</button>
+            <button data-v="masonry">Masonry</button>
+            <button data-v="featured" title="One large image + supporting grid">Featured</button>
+            <button data-v="random">Random</button>
+          </div>
+          <div class="row pad">
+            <button id="btn-auto-layout" class="wbtn primary">Auto Arrange</button>
+            <button id="btn-randomize" class="wbtn" title="Generate another arrangement without reselecting images">Regenerate</button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-title">Canvas Orientation</div>
+          <div class="seg" id="auto-orient-seg">
+            <button data-v="auto" class="active" title="Keep the current canvas shape">Auto</button>
+            <button data-v="landscape" title="Landscape 16:9">Landscape</button>
+            <button data-v="portrait" title="Portrait 9:16">Portrait</button>
+            <button data-v="square" title="Square 1:1">Square</button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-title">Image Fit</div>
+          <div class="seg" id="auto-fit-seg">
+            <button data-v="cover" class="active" title="Fill the frame, crop the excess">Cover</button>
+            <button data-v="contain" title="Fit inside the frame without cropping">Contain</button>
+          </div>
+        </div>
+
+        <div class="panel-section hidden" id="layout-templates-section">
+          <div class="section-title">Templates <button id="btn-manage-templates" class="mini" title="Save current layout as a template">Save New</button></div>
+          <div id="template-list" class="template-list"></div>
+        </div>
+
+        <div class="panel-section hidden" id="layout-custom-section">
+          <p class="hint">In Custom mode images move freely and can overlap. Use the toolbar shortcuts to align, distribute and layer.</p>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-title">Spacing &amp; Margins</div>
+          <label class="field"><span>Margin</span><input type="number" id="sp-margin" min="0" max="400" value="20"> px</label>
+          <label class="field"><span>Spacing</span><input type="number" id="sp-gap" min="0" max="400" value="12"> px</label>
+          <button id="btn-apply-spacing" class="wbtn">Apply to Layout</button>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-title">Align &amp; Distribute</div>
+          <div class="seg" id="align-seg">
+            <button data-a="left" title="Align left">L</button>
+            <button data-a="hcenter" title="Align horizontal center">C</button>
+            <button data-a="right" title="Align right">R</button>
+            <button data-a="top" title="Align top">T</button>
+            <button data-a="vcenter" title="Align middle">M</button>
+            <button data-a="bottom" title="Align bottom">B</button>
+          </div>
+          <div class="row pad">
+            <button id="btn-distribute-h" class="wbtn" title="Distribute horizontally">Distribute H</button>
+            <button id="btn-distribute-v" class="wbtn" title="Distribute vertically">Distribute V</button>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="section-title">Canvas Size</div>
+          <div class="presets" id="canvas-presets"></div>
+          <button id="btn-custom-size" class="wbtn">Custom Size…</button>
+        </div>
+
+        <div class="panel-section" id="bg-section">
+          <div class="section-title">Background</div>
+          <div id="bg-type-seg" class="seg">{}</div>
+          <div id="bg-colors"></div>
+          <div id="bg-angle-row" class="row pad hidden"><label class="field"><span>Angle</span><input type="number" id="bg-angle" min="0" max="360" value="90">°</label></div>
+          <button id="btn-apply-bg" class="wbtn">Apply Background</button>
+        </div>
+      </aside>
+
+      <section id="viewport">
+        <div id="viewport-contents">
+          <div id="world">
+            <div id="canvas-wrap">
+              <div id="canvas"></div>
+            </div>
+          </div>
+        </div>
+        <div id="empty-state">
+          <div class="empty-icon">📋</div>
+          <div class="empty-title">Paste an image to get started</div>
+          <div class="empty-sub">Press <b>Ctrl + V</b> or drag images into the window.</div>
+          <button id="btn-empty-browse" class="wbtn primary">Browse Images…</button>
+        </div>
+        <div id="zoom-controls">
+          <button id="zoom-out" title="Zoom out">−</button>
+          <span id="zoom-label">100%</span>
+          <button id="zoom-in" title="Zoom in">+</button>
+          <span class="zdiv"></span>
+          <button id="zoom-fit" title="Fit to screen">Fit</button>
+          <button id="zoom-100" title="100% zoom">100%</button>
+        </div>
+        <div id="guides"></div>
+        <div id="marquee"></div>
+      </section>
+
+      <aside id="layers-panel">
+        <div class="panel-header">Layers</div>
+        <div class="layers-tools">
+          <button id="btn-bring-front" title="Bring to front">⤒</button>
+          <button id="btn-bring-forward" title="Bring forward">⤒'</button>
+          <button id="btn-send-backward" title="Send backward">⤓'</button>
+          <button id="btn-send-back" title="Send to back">⤓</button>
+          <button id="btn-lock-toggle" title="Lock / unlock selected">🔒</button>
+          <button id="btn-delete-layer" title="Delete selected">🗑</button>
+        </div>
+        <div id="layer-list"></div>
+        <div class="layers-footer">
+          <div class="bg-layer">
+            <span class="eye">◨</span>
+            <span>Background</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div id="image-tray" class="hidden">
+      <div class="tray-head">
+        <span class="tray-title">Images <span id="tray-count">0</span></span>
+        <button id="btn-tray-add" class="tb-btn" title="Add more images from your computer"><span class="ico">🖼</span><span>Add Images</span></button>
+        <button id="btn-tray-auto" class="wbtn" title="Automatically arrange all images">Automatic</button>
+        <button id="btn-tray-manual" class="wbtn" title="Free placement — drag, resize and layer images yourself">Manual</button>
+        <button id="btn-tray-regenerate" class="wbtn" title="Generate a fresh automatic layout">Regenerate</button>
+        <button id="btn-tray-clear" class="wbtn danger" title="Remove all images">Clear All</button>
+      </div>
+      <div id="tray-scroll"><div id="tray-list"></div></div>
+    </div>
+
+    <footer id="statusbar">
+      <div id="status-zoom"><b>Zoom:</b> <span id="status-zoom-val">100%</span></div>
+      <div id="status-canvas"><b>Canvas:</b> <span id="status-canvas-val">1080 × 1080</span></div>
+      <div id="status-count"><b>Images:</b> <span id="status-count-val">0</span></div>
+      <div id="status-proj" class="spacer">Untitled</div>
+      <div class="hint" id="status-hint">Right-click an image for more options</div>
+    </footer>
+  </div>
+
+  <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/gif,image/bmp" multiple hidden>
+
+  <div id="context-menu" class="hidden"></div>
+  <div id="modal-root"></div>
+  <div id="toast-root"></div>
+
+  <div id="crop-overlay" class="hidden">
+    <div id="crop-stage"></div>
+    <div id="crop-toolbar">
+      <div id="crop-ratio-seg" class="seg">
+        <button data-v="free" class="active">Free</button>
+        <button data-v="1:1">1:1</button>
+        <button data-v="4:5">4:5</button>
+        <button data-v="16:9">16:9</button>
+        <button data-v="9:16">9:16</button>
+        <button data-v="orig">Original</button>
+      </div>
+      <div class="row pad">
+        <button id="crop-cancel" class="wbtn">Cancel</button>
+        <button id="crop-apply" class="wbtn primary">Apply Crop</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
